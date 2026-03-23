@@ -13,7 +13,6 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "voyageai>=0.3.5",
     "networkx>=3.6.1",
-    "wikipedia>=1.4.0",
     "matplotlib>=3.10.8",
 ]
 

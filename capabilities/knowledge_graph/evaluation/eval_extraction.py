@@ -8,10 +8,13 @@ import json
 from pathlib import Path
 
 import anthropic
-import wikipedia
+import requests
+from dotenv import load_dotenv
 
-client = anthropic.Anthropic()
 MODEL = "claude-haiku-4-5"
+WIKI_API = "https://en.wikipedia.org/api/rest_v1/page/summary/"
+# Wikimedia policy rejects requests without an identifying User-Agent
+HEADERS = {"User-Agent": "claude-cookbooks/1.0 (https://github.com/anthropics/claude-cookbooks)"}
 
 ENTITY_TYPES = ["PERSON", "ORGANIZATION", "LOCATION", "EVENT", "ARTIFACT"]
 
@@ -59,8 +62,32 @@ PROMPT = """Extract a knowledge graph from the document below.
 Extract only entities that are central to what this document is about — skip \
 incidental mentions. Every relation must connect two entities you extracted."""
 
+# Maps known surface-form variants to the canonical names used in
+# sample_triples.json. Without this a predicted "National Aeronautics and
+# Space Administration" never matches gold "NASA" and relation recall is
+# artificially low. Extend this when the extractor starts emitting new
+# variants the gold set doesn't list verbatim.
+ALIAS_MAP = {
+    "national aeronautics and space administration": "nasa",
+    "the moon": "moon",
+    "edwin aldrin": "buzz aldrin",
+    "edwin 'buzz' aldrin": "buzz aldrin",
+    "neil a. armstrong": "neil armstrong",
+    "apollo lunar module": "lunar module eagle",
+    "eagle": "lunar module eagle",
+    "command module columbia": "columbia",
+    "u.s. navy": "united states navy",
+    "us navy": "united states navy",
+}
 
-def extract(text: str) -> dict:
+
+def fetch_summary(title: str) -> str:
+    r = requests.get(WIKI_API + title.replace(" ", "_"), headers=HEADERS, timeout=10)
+    r.raise_for_status()
+    return r.json()["extract"]
+
+
+def extract(client: anthropic.Anthropic, text: str) -> dict:
     response = client.messages.create(
         model=MODEL,
         max_tokens=2048,
@@ -79,42 +106,41 @@ def prf(predicted: set, gold: set) -> tuple[float, float, float]:
     return p, r, f1
 
 
-def canonicalize(name: str, alias_map: dict[str, str]) -> str:
+def canon(name: str) -> str:
     lower = name.lower().strip()
-    return alias_map.get(lower, lower)
+    return ALIAS_MAP.get(lower, lower)
 
 
 def main() -> None:
+    load_dotenv()
+    client = anthropic.Anthropic()
+
     gold_path = Path(__file__).parent.parent / "data" / "sample_triples.json"
     with open(gold_path) as f:
         gold = json.load(f)
 
-    # Gold names serve double duty as the canonical-form target for relation
-    # endpoint matching — predicted "National Aeronautics and Space
-    # Administration" should match gold "NASA" if the gold set lists it.
-    alias_map: dict[str, str] = {}
-    for labels in gold.values():
-        for e in labels["entities"]:
-            alias_map[e["name"].lower()] = e["name"].lower()
-
     ent_p_sum = ent_r_sum = ent_f_sum = 0.0
     rel_p_sum = rel_r_sum = rel_f_sum = 0.0
+    scored = 0
 
     for title, labels in gold.items():
-        text = wikipedia.summary(title, sentences=8, auto_suggest=False)
-        result = extract(text)
+        try:
+            text = fetch_summary(title)
+        except requests.RequestException as e:
+            print(f"Skipping {title}: {e}")
+            continue
 
-        pred_ents = {e["name"].lower() for e in result["entities"]}
+        result = extract(client, text)
+        scored += 1
+
+        pred_ents = {canon(e["name"]) for e in result["entities"]}
         gold_ents = {e["name"].lower() for e in labels["entities"]}
         ep, er, ef = prf(pred_ents, gold_ents)
         ent_p_sum += ep
         ent_r_sum += er
         ent_f_sum += ef
 
-        pred_rels = {
-            (canonicalize(r["source"], alias_map), canonicalize(r["target"], alias_map))
-            for r in result["relations"]
-        }
+        pred_rels = {(canon(r["source"]), canon(r["target"])) for r in result["relations"]}
         gold_rels = {(r["source"].lower(), r["target"].lower()) for r in labels["relations"]}
         rp, rr, rf = prf(pred_rels, gold_rels)
         rel_p_sum += rp
@@ -131,11 +157,20 @@ def main() -> None:
         if missed_rels:
             print(f"  missed relations: {len(missed_rels)}")
 
-    n = len(gold)
+    if not scored:
+        print("No documents scored.")
+        return
+
     print(f"\n{'=' * 50}")
-    print(f"Macro-averaged over {n} documents:")
-    print(f"  entities:  P={ent_p_sum / n:.2f}  R={ent_r_sum / n:.2f}  F1={ent_f_sum / n:.2f}")
-    print(f"  relations: P={rel_p_sum / n:.2f}  R={rel_r_sum / n:.2f}  F1={rel_f_sum / n:.2f}")
+    print(f"Macro-averaged over {scored} documents:")
+    print(
+        f"  entities:  P={ent_p_sum / scored:.2f}  "
+        f"R={ent_r_sum / scored:.2f}  F1={ent_f_sum / scored:.2f}"
+    )
+    print(
+        f"  relations: P={rel_p_sum / scored:.2f}  "
+        f"R={rel_r_sum / scored:.2f}  F1={rel_f_sum / scored:.2f}"
+    )
 
 
 if __name__ == "__main__":
