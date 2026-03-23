@@ -119,7 +119,7 @@ def main() -> None:
     client = anthropic.Anthropic()
 
     gold_path = Path(__file__).parent.parent / "data" / "sample_triples.json"
-    with open(gold_path) as f:
+    with open(gold_path, encoding="utf-8") as f:
         gold = json.load(f)
 
     ent_p_sum = ent_r_sum = ent_f_sum = 0.0
