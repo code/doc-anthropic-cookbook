@@ -1,4 +1,14 @@
 # yaml-language-server: $schema=./.github/registry_schema.json
+- title: Knowledge graph construction with Claude
+  description: Build knowledge graphs from unstructured text using Claude for entity
+    extraction, relation mining, deduplication, and multi-hop graph querying.
+  path: capabilities/knowledge_graph/guide.ipynb
+  authors:
+  - Anthropic
+  date: '2026-03-23'
+  categories:
+  - RAG & Retrieval
+  - Tools
 - title: Giving Claude a crop tool for better image analysis
   description: Give Claude a crop tool to zoom into image regions for detailed analysis
     of charts, documents, and diagrams.
