@@ -101,7 +101,9 @@ def extract(client: anthropic.Anthropic, text: str) -> dict:
     return block.input
 
 
-def prf(predicted: set, gold: set) -> tuple[float, float, float]:
+def prf(
+    predicted: set[str] | set[tuple[str, str]], gold: set[str] | set[tuple[str, str]]
+) -> tuple[float, float, float]:
     tp = len(predicted & gold)
     p = tp / len(predicted) if predicted else 0.0
     r = tp / len(gold) if gold else 0.0
@@ -137,14 +139,14 @@ def main() -> None:
         scored += 1
 
         pred_ents = {canon(e["name"]) for e in result["entities"]}
-        gold_ents = {e["name"].lower() for e in labels["entities"]}
+        gold_ents = {canon(e["name"]) for e in labels["entities"]}
         ep, er, ef = prf(pred_ents, gold_ents)
         ent_p_sum += ep
         ent_r_sum += er
         ent_f_sum += ef
 
         pred_rels = {(canon(r["source"]), canon(r["target"])) for r in result["relations"]}
-        gold_rels = {(r["source"].lower(), r["target"].lower()) for r in labels["relations"]}
+        gold_rels = {(canon(r["source"]), canon(r["target"])) for r in labels["relations"]}
         rp, rr, rf = prf(pred_rels, gold_rels)
         rel_p_sum += rp
         rel_r_sum += rr

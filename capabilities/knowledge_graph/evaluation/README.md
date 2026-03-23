@@ -7,7 +7,7 @@ Scores entity and relation extraction against the hand-labeled gold set in `../d
 Put your API key in a `.env` file at the repository root:
 
 ```
-ANTHROPIC_API_KEY=sk-...
+ANTHROPIC_API_KEY=your-key-here
 ```
 
 Then:
