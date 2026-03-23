@@ -95,7 +95,10 @@ def extract(client: anthropic.Anthropic, text: str) -> dict:
         tool_choice={"type": "tool", "name": "extract_graph"},
         messages=[{"role": "user", "content": PROMPT.format(text=text)}],
     )
-    return next(b.input for b in response.content if b.type == "tool_use")
+    block = next((b for b in response.content if b.type == "tool_use"), None)
+    if block is None:
+        raise ValueError(f"No tool_use block in response (stop_reason={response.stop_reason})")
+    return block.input
 
 
 def prf(predicted: set, gold: set) -> tuple[float, float, float]:
