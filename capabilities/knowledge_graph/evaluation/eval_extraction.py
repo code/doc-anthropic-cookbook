@@ -65,13 +65,16 @@ incidental mentions. Every relation must connect two entities you extracted."""
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
-# Maps known surface-form variants to the canonical names used in
-# sample_triples.json. Without this a predicted "National Aeronautics and
-# Space Administration" never matches gold "NASA" and relation recall is
-# artificially low. Shared with the notebook so inline and standalone
-# scoring stay in sync.
-with open(DATA_DIR / "alias_map.json", encoding="utf-8") as f:
-    ALIAS_MAP: dict[str, str] = json.load(f)
+
+def load_alias_map() -> dict[str, str]:
+    """Surface-form variants mapped to canonical gold names.
+
+    Without this a predicted "National Aeronautics and Space Administration"
+    never matches gold "NASA" and relation recall is artificially low. Shared
+    with the notebook so inline and standalone scoring stay in sync.
+    """
+    with open(DATA_DIR / "alias_map.json", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def fetch_summary(title: str) -> str:
@@ -103,14 +106,14 @@ def prf(predicted: set, gold: set) -> tuple[float, float, float]:
     return p, r, f1
 
 
-def canon(name: str) -> str:
-    lower = name.lower().strip()
-    return ALIAS_MAP.get(lower, lower)
-
-
 def main() -> None:
     load_dotenv()
     client = anthropic.Anthropic()
+    alias_map = load_alias_map()
+
+    def canon(name: str) -> str:
+        lower = name.lower().strip()
+        return alias_map.get(lower, lower)
 
     with open(DATA_DIR / "sample_triples.json", encoding="utf-8") as f:
         gold = json.load(f)
