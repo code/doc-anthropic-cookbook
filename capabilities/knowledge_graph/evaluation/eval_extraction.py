@@ -6,6 +6,7 @@ and reports entity and relation P/R/F1 against data/sample_triples.json.
 
 import json
 from pathlib import Path
+from typing import Any
 from urllib.parse import quote
 
 import anthropic
@@ -84,7 +85,7 @@ def fetch_summary(title: str) -> str:
     return r.json()["extract"]
 
 
-def extract(client: anthropic.Anthropic, text: str) -> dict:
+def extract(client: anthropic.Anthropic, text: str) -> dict[str, Any]:
     response = client.messages.create(
         model=MODEL,
         max_tokens=2048,
