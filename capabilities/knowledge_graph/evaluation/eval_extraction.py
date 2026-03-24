@@ -6,6 +6,7 @@ and reports entity and relation P/R/F1 against data/sample_triples.json.
 
 import json
 from pathlib import Path
+from urllib.parse import quote
 
 import anthropic
 import requests
@@ -62,27 +63,20 @@ PROMPT = """Extract a knowledge graph from the document below.
 Extract only entities that are central to what this document is about — skip \
 incidental mentions. Every relation must connect two entities you extracted."""
 
+DATA_DIR = Path(__file__).parent.parent / "data"
+
 # Maps known surface-form variants to the canonical names used in
 # sample_triples.json. Without this a predicted "National Aeronautics and
 # Space Administration" never matches gold "NASA" and relation recall is
-# artificially low. Extend this when the extractor starts emitting new
-# variants the gold set doesn't list verbatim.
-ALIAS_MAP = {
-    "national aeronautics and space administration": "nasa",
-    "the moon": "moon",
-    "edwin aldrin": "buzz aldrin",
-    "edwin 'buzz' aldrin": "buzz aldrin",
-    "neil a. armstrong": "neil armstrong",
-    "apollo lunar module": "lunar module eagle",
-    "eagle": "lunar module eagle",
-    "command module columbia": "columbia",
-    "u.s. navy": "united states navy",
-    "us navy": "united states navy",
-}
+# artificially low. Shared with the notebook so inline and standalone
+# scoring stay in sync.
+with open(DATA_DIR / "alias_map.json", encoding="utf-8") as f:
+    ALIAS_MAP: dict[str, str] = json.load(f)
 
 
 def fetch_summary(title: str) -> str:
-    r = requests.get(WIKI_API + title.replace(" ", "_"), headers=HEADERS, timeout=10)
+    slug = quote(title.replace(" ", "_"), safe="")
+    r = requests.get(WIKI_API + slug, headers=HEADERS, timeout=10)
     r.raise_for_status()
     return r.json()["extract"]
 
@@ -118,8 +112,7 @@ def main() -> None:
     load_dotenv()
     client = anthropic.Anthropic()
 
-    gold_path = Path(__file__).parent.parent / "data" / "sample_triples.json"
-    with open(gold_path, encoding="utf-8") as f:
+    with open(DATA_DIR / "sample_triples.json", encoding="utf-8") as f:
         gold = json.load(f)
 
     ent_p_sum = ent_r_sum = ent_f_sum = 0.0
@@ -129,11 +122,10 @@ def main() -> None:
     for title, labels in gold.items():
         try:
             text = fetch_summary(title)
-        except requests.RequestException as e:
+            result = extract(client, text)
+        except (requests.RequestException, ValueError, anthropic.APIError) as e:
             print(f"Skipping {title}: {e}")
             continue
-
-        result = extract(client, text)
         scored += 1
 
         pred_ents = {canon(e["name"]) for e in result["entities"]}

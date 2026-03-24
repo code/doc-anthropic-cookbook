@@ -19,7 +19,7 @@ uv run python capabilities/knowledge_graph/evaluation/eval_extraction.py
 
 ## Metrics
 
-**Entity P/R/F1** — an extracted entity counts as a true positive if its canonicalized name matches a gold entity in the same document. Canonicalization lowercases and maps known surface-form variants ("National Aeronautics and Space Administration" → "nasa") via the `ALIAS_MAP` in the script. Type agreement is reported separately.
+**Entity P/R/F1** — an extracted entity counts as a true positive if its canonicalized name matches a gold entity in the same document. Canonicalization lowercases and maps known surface-form variants ("National Aeronautics and Space Administration" → "nasa") via `data/alias_map.json`.
 
 **Relation P/R/F1** — a relation counts as a true positive if both canonicalized endpoints match a gold (source, target) pair. **Predicate wording is ignored**: "commanded" and "was commander of" both count, but so would a semantically wrong predicate like "destroyed" between the same two entities. This makes the reported relation recall an upper bound — it measures whether the extractor found the right *connections*, not whether it labeled them correctly. For stricter scoring you would add a predicate-similarity check (e.g. a Claude judge call per candidate pair).
 
