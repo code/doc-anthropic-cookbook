@@ -101,9 +101,7 @@ def extract(client: anthropic.Anthropic, text: str) -> dict:
     return block.input
 
 
-def prf(
-    predicted: set[str] | set[tuple[str, str]], gold: set[str] | set[tuple[str, str]]
-) -> tuple[float, float, float]:
+def prf(predicted: set, gold: set) -> tuple[float, float, float]:
     tp = len(predicted & gold)
     p = tp / len(predicted) if predicted else 0.0
     r = tp / len(gold) if gold else 0.0

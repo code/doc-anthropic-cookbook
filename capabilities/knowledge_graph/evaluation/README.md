@@ -4,22 +4,17 @@ Scores entity and relation extraction against the hand-labeled gold set in `../d
 
 ## Running
 
-Install dependencies:
+From the repository root, install dependencies and set your API key:
 
 ```bash
-pip install anthropic requests python-dotenv
-```
-
-Put your API key in a `.env` file at the repository root:
-
-```
-ANTHROPIC_API_KEY=your-key-here
+uv sync --all-extras
+cp .env.example .env  # then edit .env to add ANTHROPIC_API_KEY
 ```
 
 Then:
 
 ```bash
-python eval_extraction.py
+uv run python capabilities/knowledge_graph/evaluation/eval_extraction.py
 ```
 
 ## Metrics
@@ -36,5 +31,7 @@ With `claude-haiku-4-5` and the extraction prompt from the guide, expect roughly
 |---|---|---|---|
 | Entities | 0.80–0.90 | 0.70–0.85 | 0.75–0.85 |
 | Relations | 0.70–0.85 | 0.55–0.70 | 0.60–0.75 |
+
+These ranges are indicative; actual scores vary run-to-run due to model non-determinism.
 
 Recall on relations is the hard number — the extractor tends to be conservative, preferring fewer high-confidence edges over exhaustive coverage. Tuning the extraction prompt for higher recall (e.g. "extract every stated relationship, even minor ones") trades precision for recall.
