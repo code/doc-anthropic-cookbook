@@ -4,6 +4,12 @@ Scores entity and relation extraction against the hand-labeled gold set in `../d
 
 ## Running
 
+Install dependencies:
+
+```bash
+pip install anthropic requests python-dotenv
+```
+
 Put your API key in a `.env` file at the repository root:
 
 ```

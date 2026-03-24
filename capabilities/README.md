@@ -14,7 +14,7 @@ Welcome to the Capabilities section of the Claude Cookbooks! This directory cont
 
 - **[Text-to-SQL with Claude](./text_to_sql/guide.ipynb)**: This guide covers how to generate complex SQL queries from natural language using prompting techniques, self-improvement, and RAG. We'll also explore how to evaluate and improve the accuracy of generated SQL queries, with evals that test for syntax, data correctness, row count, and more.
 
-- **[Knowledge Graph Construction with Claude](./knowledge_graph/guide.ipynb)**: Build a knowledge graph from unstructured text end-to-end. This guide covers the classical pipeline — named entity recognition, relation extraction, entity resolution, and entity summarization — using forced tool use for structured output and Claude-driven deduplication in place of string-similarity heuristics. You'll assemble the result in NetworkX, visualize it, and run multi-hop queries, with precision/recall evaluation against a hand-labeled gold set.
+- **[Knowledge Graph Construction with Claude](./knowledge_graph/guide.ipynb)**: Build a knowledge graph from unstructured text end-to-end — named entity recognition, relation extraction, entity resolution, and multi-hop querying — using forced tool use for structured output and Claude-driven deduplication in place of string-similarity heuristics.
 
 ## Getting Started
 
