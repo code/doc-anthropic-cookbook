@@ -6,54 +6,38 @@ and reports entity and relation P/R/F1 against data/sample_triples.json.
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Literal
 from urllib.parse import quote
 
 import anthropic
 import requests
 from dotenv import load_dotenv
+from pydantic import BaseModel
 
 MODEL = "claude-haiku-4-5"
 WIKI_API = "https://en.wikipedia.org/api/rest_v1/page/summary/"
 # Wikimedia policy rejects requests without an identifying User-Agent
 HEADERS = {"User-Agent": "claude-cookbooks/1.0 (https://github.com/anthropics/claude-cookbooks)"}
 
-ENTITY_TYPES = ["PERSON", "ORGANIZATION", "LOCATION", "EVENT", "ARTIFACT"]
+EntityType = Literal["PERSON", "ORGANIZATION", "LOCATION", "EVENT", "ARTIFACT"]
 
-EXTRACT_TOOL = {
-    "name": "extract_graph",
-    "description": "Record the entities and relations found in a document.",
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "entities": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "name": {"type": "string"},
-                        "type": {"type": "string", "enum": ENTITY_TYPES},
-                        "description": {"type": "string"},
-                    },
-                    "required": ["name", "type", "description"],
-                },
-            },
-            "relations": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "source": {"type": "string"},
-                        "predicate": {"type": "string"},
-                        "target": {"type": "string"},
-                    },
-                    "required": ["source", "predicate", "target"],
-                },
-            },
-        },
-        "required": ["entities", "relations"],
-    },
-}
+
+class Entity(BaseModel):
+    name: str
+    type: EntityType
+    description: str
+
+
+class Relation(BaseModel):
+    source: str
+    predicate: str
+    target: str
+
+
+class ExtractedGraph(BaseModel):
+    entities: list[Entity]
+    relations: list[Relation]
+
 
 PROMPT = """Extract a knowledge graph from the document below.
 
@@ -85,18 +69,14 @@ def fetch_summary(title: str) -> str:
     return r.json()["extract"]
 
 
-def extract(client: anthropic.Anthropic, text: str) -> dict[str, Any]:
-    response = client.messages.create(
+def extract(client: anthropic.Anthropic, text: str) -> ExtractedGraph:
+    response = client.messages.parse(
         model=MODEL,
         max_tokens=2048,
-        tools=[EXTRACT_TOOL],
-        tool_choice={"type": "tool", "name": "extract_graph"},
         messages=[{"role": "user", "content": PROMPT.format(text=text)}],
+        output_format=ExtractedGraph,
     )
-    block = next((b for b in response.content if b.type == "tool_use"), None)
-    if block is None:
-        raise ValueError(f"No tool_use block in response (stop_reason={response.stop_reason})")
-    return block.input
+    return response.parsed_output
 
 
 def prf(predicted: set, gold: set) -> tuple[float, float, float]:
@@ -127,19 +107,19 @@ def main() -> None:
         try:
             text = fetch_summary(title)
             result = extract(client, text)
-        except (requests.RequestException, ValueError, anthropic.APIError) as e:
+        except (requests.RequestException, anthropic.APIError) as e:
             print(f"Skipping {title}: {e}")
             continue
         scored += 1
 
-        pred_ents = {canon(e["name"]) for e in result["entities"]}
+        pred_ents = {canon(e.name) for e in result.entities}
         gold_ents = {canon(e["name"]) for e in labels["entities"]}
         ep, er, ef = prf(pred_ents, gold_ents)
         ent_p_sum += ep
         ent_r_sum += er
         ent_f_sum += ef
 
-        pred_rels = {(canon(r["source"]), canon(r["target"])) for r in result["relations"]}
+        pred_rels = {(canon(r.source), canon(r.target)) for r in result.relations}
         gold_rels = {(canon(r["source"]), canon(r["target"])) for r in labels["relations"]}
         rp, rr, rf = prf(pred_rels, gold_rels)
         rel_p_sum += rp
