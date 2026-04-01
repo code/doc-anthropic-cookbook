@@ -178,6 +178,16 @@
   categories:
   - Claude Agent SDK
   - Agent Patterns
+- title: Building a session browser
+  description: List, read, rename, tag, and fork Agent SDK sessions on disk to build
+    a conversation history sidebar without writing a transcript parser.
+  path: claude_agent_sdk/05_Building_a_session_browser.ipynb
+  authors:
+  - qing-ant
+  date: '2026-03-30'
+  categories:
+  - Claude Agent SDK
+  - Agent Patterns
 - title: Extended thinking
   description: Use Claude's extended thinking for transparent step-by-step reasoning
     with budget management.
