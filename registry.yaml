@@ -1,4 +1,15 @@
 # yaml-language-server: $schema=./.github/registry_schema.json
+- title: Threat intelligence enrichment agent
+  description: Build an agent that autonomously investigates IOCs by querying multiple
+    threat intel sources, cross-referencing findings, mapping to MITRE ATT&CK, and
+    producing structured reports for SIEM and SOAR integration.
+  path: tool_use/threat_intel_enrichment_agent.ipynb
+  authors:
+  - jannet-park
+  date: '2026-03-27'
+  categories:
+  - Tools
+  - Agent Patterns
 - title: Knowledge graph construction with Claude
   description: Build knowledge graphs from unstructured text using Claude for entity
     extraction, relation mining, deduplication, and multi-hop graph querying.
