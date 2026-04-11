@@ -49,7 +49,7 @@
   path: managed_agents/sre_incident_responder.ipynb
   authors:
   - gaganb-ant
-  date: '2026-04-08'
+  date: '2026-04-10'
   categories:
   - Agent Patterns
   - Observability
