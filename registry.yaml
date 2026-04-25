@@ -737,9 +737,8 @@
   - Multimodal
   - Tools
 - title: Build agents that remember your users
-  description: Give a Managed Agent a memory store so it learns and recalls a
-    customer's shopping preferences across separate sessions, plus patterns for
-    seeding, inspecting, and combining stores from your own application.
+  description: Give your Claude Managed Agents a Memory store so they learn and
+    remember your users' preferences across multiple interactions.
   path: managed_agents/CMA_remember_user_preferences.ipynb
   authors:
   - gaganb-ant
