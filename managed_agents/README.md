@@ -35,6 +35,7 @@ it introduces every API shape the others build on.
 | [`CMA_gate_human_in_the_loop.ipynb`](CMA_gate_human_in_the_loop.ipynb) | Human-in-the-loop expense approval via custom-tool `decide()` / `escalate()`. Covers the custom-tool round-trip pattern, the `requires_action` idle bounce, and parallel-tool-call dedupe. |
 | [`CMA_prompt_versioning_and_rollback.ipynb`](CMA_prompt_versioning_and_rollback.ipynb) | Server-side prompt versioning: create v1, evaluate against a labelled test set, ship v2, detect a regression, roll back by pinning sessions to version 1. Covers `agents.update`, version pinning on `sessions.create`, and where the review gate moves when prompts are not code. |
 | [`CMA_operate_in_production.ipynb`](CMA_operate_in_production.ipynb) | Production setup: MCP toolsets, vaults for per-end-user credentials, the `session.status_idled` webhook pattern for HITL without long-lived connections, and the resource lifecycle CRUD verbs. |
+| [`CMA_remember_user_preferences.ipynb`](CMA_remember_user_preferences.ipynb) | Memory stores: a shopping agent that learns a customer's preferences in one session and recalls them in the next. Covers `memory_stores.create`, the `resources` attachment with per-attachment `instructions`, inspecting and seeding memories from your own application, and combining a per-customer read-write store with a brand-wide read-only store. |
 
 The streaming event loop is walked through line by line in the
 iterate notebook and then factored into
