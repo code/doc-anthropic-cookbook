@@ -736,3 +736,13 @@
   categories:
   - Multimodal
   - Tools
+- title: Build agents that remember your users
+  description: Give your Claude Managed Agents a Memory store so they learn and
+    remember your users' preferences across multiple interactions.
+  path: managed_agents/CMA_remember_user_preferences.ipynb
+  authors:
+  - gaganb-ant
+  date: '2026-04-24'
+  categories:
+  - Agent Patterns
+  - Tools
