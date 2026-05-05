@@ -76,6 +76,7 @@
   categories:
   - Tools
   - Agent Patterns
+  - Cybersecurity
 - title: Knowledge graph construction with Claude
   description: Build knowledge graphs from unstructured text using Claude for entity
     extraction, relation mining, deduplication, and multi-hop graph querying.
@@ -746,3 +747,14 @@
   categories:
   - Agent Patterns
   - Tools
+- title: The vulnerability detection agent
+  description: Build a vulnerability-discovery agent with the Claude Agent SDK
+    that threat-models a C target, hunts memory-safety bugs with built-in file
+    tools, and triages findings into a structured report.
+  path: claude_agent_sdk/06_The_vulnerability_detection_agent.ipynb
+  authors:
+  - eugeneyan-ant
+  date: '2026-04-22'
+  categories:
+  - Claude Agent SDK
+  - Cybersecurity
