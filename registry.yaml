@@ -758,7 +758,7 @@
   categories:
   - Claude Agent SDK
   - Cybersecurity
-- title: Coordinate a Specialist Team
+- title: 'Multiagent: coordinate a specialist team'
   description: Heterogeneous team via the multiagent coordinator config — a coordinator
     runs three specialists (web-search researcher, file-reading librarian, rules-based
     pricer) with scoped toolsets to assemble a sales proposal. Covers the multiagent
@@ -771,7 +771,7 @@
   categories:
   - Agent Patterns
   - Tools
-- title: 'Outcomes: Agents that verify their own work'
+- title: 'Outcomes: agents that verify their own work'
   description: 'Build a grade-and-revise loop with Outcomes: a writer drafts a cited
     research brief, a stateless grader fetches every URL and checks every quote against
     a rubric, and feedback drives revisions until the brief passes. Covers user.define_outcome,
