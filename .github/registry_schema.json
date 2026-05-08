@@ -30,6 +30,7 @@
           "enum": [
             "Agent Patterns",
             "Claude Agent SDK",
+            "Claude Managed Agents",
             "Cybersecurity",
             "Evals",
             "Fine-Tuning",
