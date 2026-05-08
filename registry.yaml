@@ -8,7 +8,7 @@
   - jyan-anthropic
   date: '2026-04-08'
   categories:
-  - Agent Patterns
+  - Claude Managed Agents
   - Tools
 - title: Build a Slack data analyst bot with Claude Managed Agents
   description: Mention the bot with a CSV to get an analysis report in-thread, with
@@ -18,7 +18,7 @@
   - charmaine
   date: '2026-04-08'
   categories:
-  - Agent Patterns
+  - Claude Managed Agents
   - Integrations
 - title: 'Managed Agents tutorial: iterate on a failing test suite'
   description: Entry-point tutorial for the Claude Managed Agents API. Walks through
@@ -29,7 +29,7 @@
   - pauly-ant
   date: '2026-04-08'
   categories:
-  - Agent Patterns
+  - Claude Managed Agents
   - Tools
 - title: 'Managed Agents tutorial: production setup'
   description: End-to-end production story for Managed Agents — vault-backed MCP
@@ -40,7 +40,7 @@
   - pauly-ant
   date: '2026-04-08'
   categories:
-  - Agent Patterns
+  - Claude Managed Agents
   - Integrations
 - title: Build an SRE incident response agent with Claude Managed Agents
   description: 'Wire Claude into your on-call flow: when an alert fires, the agent
@@ -51,7 +51,7 @@
   - gaganb-ant
   date: '2026-04-10'
   categories:
-  - Agent Patterns
+  - Claude Managed Agents
   - Observability
 - title: 'Managed Agents tutorial: prompt versioning and rollback'
   description: Server-side prompt versioning — create v1, evaluate against a labelled
@@ -63,7 +63,7 @@
   - markn-ant
   date: '2026-04-07'
   categories:
-  - Agent Patterns
+  - Claude Managed Agents
   - Evals
 - title: Threat intelligence enrichment agent
   description: Build an agent that autonomously investigates IOCs by querying multiple
@@ -745,7 +745,7 @@
   - gaganb-ant
   date: '2026-04-24'
   categories:
-  - Agent Patterns
+  - Claude Managed Agents
   - Tools
 - title: The vulnerability detection agent
   description: Build a vulnerability-discovery agent with the Claude Agent SDK
@@ -769,7 +769,7 @@
   - markn-ant
   date: '2026-05-03'
   categories:
-  - Agent Patterns
+  - Claude Managed Agents
   - Tools
 - title: 'Outcomes: agents that verify their own work'
   description: 'Build a grade-and-revise loop with Outcomes: a writer drafts a cited
@@ -783,5 +783,5 @@
   - gaganb-ant
   date: '2026-05-03'
   categories:
-  - Agent Patterns
+  - Claude Managed Agents
   - Evals
